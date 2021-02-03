@@ -67,7 +67,7 @@ const signUp = (attrs) => {
 }
 ```
 
-Sai dirmi due metodi degli Array simili ma che si comportano in maniera differente in termini di Side Effect? 
+Sai dirmi due metodi degli Array simili ma che si comportano in maniera differente in termini di Side Effect?
 
 * Splice fa side effect
 * Slice non fa side effect
@@ -113,6 +113,7 @@ const isOdd = val => val % 2 !== 0;
 const odds = array.filter(isOdd);
 const evens = array.filter(!isOdd); // sbem: errore!!! false is not a function
 const evens = array.filter(x => !isOdd(x));
+```
 
 Quello che succede con le HoF è una trasformazione, una valutazione di un predicato o una riduzione o accumulazione. Prendo un flusso e ottengo un altro flusso lavorato, sintetizzato, collassatto.
 
@@ -125,7 +126,17 @@ const wrapper = func => ([x, y]) => func(x, y);
 wrapper(add)([2,3]);
 ```
 
-Tra le funzioni, quella che è interessante vedere è le funzioni **Curry**, cioè la possibilità di creare funzioni che accettano un solo argomento. La particolarità sta in questa **applicazione parziale** e nel poter memorizzare una computazione di funzione e usarla più volte, durante l'esecuzione del mio codice, mettendo in atto la tecnica di Memoizzazione (memoization, cioè come se, una volta calcolato un valore, me lo appuntassi su un post-it).
+Tra le funzioni, quella che è interessante vedere è le funzioni **Curry** o **Curried Function**, cioè la possibilità di creare funzioni che accettano un solo argomento.
+Le curried function sono il comportamento di default nel linguaggio Haskell, dove, di base, tutte le funzioni accettano un parametro e possiamo ricondurre tutte le funzioni di n parametri a funzioni di 1 parametro. Ecco perché in Haskell trovo qualcosa di simile a:
+
+```h
+/* funzione che prende due parametri di tipo a e ritorna un valore di tipo a */
+a -> a -> a
+/* funzione che prende due parametri: una funzione e un valore a e che ritorna un valore di tipo a. La funzione passata per parametro prende a sua volta un parametro di tipo a */
+(a -> a) -> a -> a
+```
+
+La particolarità sta in questa **applicazione parziale** che mi crea di fatto delle funzioni on-the-fly e nel poter memorizzare una computazione di funzione e usarla più volte, durante l'esecuzione del mio codice, mettendo in atto la tecnica di Memoizzazione (memoization, cioè come se, una volta calcolato un valore, me lo appuntassi su un post-it).
 Posso creare la mia semplice curry che trasforma funzioni con 2 argormenti in singoli argomenti:
 
 ```js
@@ -152,7 +163,7 @@ uncurry(addOne)(2);
 
 ma `addOne` è `curriedAdd(1)` che è `curry(add)(1)` e pertanto posso scrivere `uncurry(curry(add)(1))(2)`.
 
-Posso fare la curry di qualsiasi funzione con qualasi numero di parametri e trasformarla in una versione curry a singolo parametro.
+Posso fare la curry di qualsiasi funzione con qualasi numero di parametri e trasformarla in una versione curry a singolo parametro. Questo processo è detto **Currying**.
 
 Proviamo a pensarla. Per fare la curry di una funzione con n parametri, quello che faccio è passare alla mia curry la funzione e gli n parametri. Questi indicano l'**arietà** della funzione, cioè il numero di parametri.
 
@@ -167,7 +178,7 @@ adesso ritorno una funzione anonima che accetta un parametro:
 ```js
 const curry = fn => {
   const arieta = fn.length;
-  return param => { } 
+  return param => { }
 }
 ```
 
@@ -178,7 +189,7 @@ const curry = fn => {
   const arieta = fn.length;
   return param => {
     if (arieta <= 1) return fn(param);
-  } 
+  }
 }
 ```
 
@@ -189,7 +200,7 @@ const curry = (fn, n) => {
   const arieta = n || fn.length;
   return param => {
     if (arieta <= 1) return fn(param);
-  } 
+  }
 }
 ```
 
@@ -207,7 +218,7 @@ const curry = (fn, n) => {
   return param => {
     if (arieta <= 1) return fn(param);
     else return curry((...rest) => fn(param, ...rest), arieta-1);
-  } 
+  }
 }
 ```
 
