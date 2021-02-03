@@ -4,6 +4,7 @@ A study repo for Functional Programming
 ## Indice
 
 * [Introduzione](./intro-fp.md)
+* [Contenitori](./container.md)
 
 ## Concetti brevi
 
