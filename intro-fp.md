@@ -30,6 +30,158 @@ quello che ottengo è:
 * testabile
 * componibile
 
+vedi anche principi: SOLID, KISS, YAGNI (ya ain't gonna need it), DRY, Basso accoppiamento, alta coesione.
+
+## Mutazioni genetiche? No di stato!
+
+Prendiamo un esempio tratto dalla seguente [guida](https://mostly-adequate.gitbooks.io/mostly-adequate-guide/content/ch01.html#a-brief-encounter), in cui rappresentiamo con una classe uno stormo di gabbiani la cui dimensione, dello stormo, cambia a seconda se si uniscano ad altri o si riproducano (conjoin e breed):
+
+```js
+class Flock {
+  constructor(n) {
+    this.seagulls = n;
+  }
+
+  conjoin(other) {
+    console.log('Conjoin: ', other.seagulls, this.seagulls)
+    this.seagulls += other.seagulls;
+    return this;
+  }
+
+  breed(other) {
+    console.log('Breed:', other.seagulls, this.seagulls)
+    this.seagulls = this.seagulls * other.seagulls;
+    return this;
+  }
+}
+
+const flockA = new Flock(4);
+const flockB = new Flock(2);
+const flockC = new Flock(0);
+const result = flockA
+  .conjoin(flockC) // 0 + 4 = 4
+  .breed(flockB) // 2 * 4 = 8
+  .conjoin(flockA.breed(flockB)/* 2*8=16 */) /* 16 + 16 = 32 in quanto ripasso flockA e la somma a se stessa*/
+  .seagulls;
+
+console.log('Result: ', result)
+/*
+Quello che volevo:
+conjoin flockA e flockC: 4 + 0 = 4
+breed flockB e il cojoin precedente = 4 * 2 = 8
+breed flockA e flockB = 4 * 2 = 8
+cojoin tra i breed precedenti = 8 + 8 = 16
+
+Quello che ottengo:
+Faccio un conjoin con un flockC 0
+Faccio un breed con un flockB di 2 ora ho uno stormo di 8
+Faccio un conjoin tra uno stormo che viene calcolato a partire dall'attuale flockA e un breed con un flockB che è 16
+ed il conjoin finale si fa tra questo 16 calcolato e flockA che è 16 e pertanto ho 32
+*/
+/*
+
+*/
+```
+
+Lo scopo è quello di osservare la difficoltà che ho dovuto mettere per iscritto nei commenti per capire come il flow dell'applicazione muti lo stato interno della mia classe.
+Con un approccio a funzioni anziché a classi avrei avuto:
+
+```js
+const conjoin = (flockX, flockY) => flockX + flockY;
+const breed = (flockX, flockY) => flockX * flockY;
+
+const flockA = 4;
+const flockB = 2;
+const flockC = 0;
+const result =
+    conjoin(breed(flockB, conjoin(flockA, flockC)), breed(flockA, flockB));
+```
+
+Il risultato è quello sperato, ma abbiamo ancora confusione dovuto al fatto di avere funzioni annidate. Quello che abbiamo fatto in realtà è stato richiamare semplici funzioni di addizione e moltiplicazione.
+
+Questo ci porta a riprendere alcune proprietà matematiche di base:
+
+```
+// proprietà associativa
+add(add(x, y), z) === add(x, add(y, z));
+
+// proprietà commutativa
+add(x, y) === add(y, x);
+
+// identità
+add(x, 0) === x;
+
+// proprietà distributiva della moltiplicazione
+multiply(x, add(y,z)) === add(multiply(x, y), multiply(x, z));
+```
+
+Ora riprendiamo il nostro esempio con funzioni e sostituiamo i nomi con `add` e `multiply`:
+
+```js
+const add = (flockX, flockY) => flockX + flockY;
+const multiply = (flockX, flockY) => flockX * flockY;
+
+const flockA = 4;
+const flockB = 2;
+const flockC = 0;
+const result =
+    add(multiply(flockB, add(flockA, flockC)), multiply(flockA, flockB));
+```
+
+e sostituiamo a seconda della proprietà:
+
+```
+add(flockA, flockC) = identità
+
+add(multiply(flockB, identità, multiply(flockA, flockB)) = distributiva
+
+ottengo:
+multiply(flockB, add(identità, z))
+
+ora sostituisco identità con flockA e z con flockA e non flockB! Attenzione, flockB qui è la x.
+```
+
+ed ecco la mia nuova chiamata:
+
+```js
+const result = multiply(flockB, add(flockA, flockA));
+```
+
+Il punto di questo esempio è che è possibile scrivere programmi concisi e leggibili sfruttando semplici proprietà matematiche. Ciò richiederà un pò di disciplina e approcciarsi in maniera differente evitando il "tutto va bene" della programmazione imperativa.
+
+## Function as First Class Citizen
+
+Probabilmente siamo abituati ad utilizzare le funzioni come dati, sia in qualità di argomenti che di risultato di una esecuzione. La chiave di comprensione è che una funzione, se usata male, aggiunge uno strato indiretto che complica anziché aggiungere valore al codice. Siamo abituati a invocare le funzioni e tornare dati, ma un altro modo di usare le funzioni è non invocarle:
+
+```js
+const func = msg => console.log(msg)
+func('ciao')
+```
+
+equivale a:
+
+```js
+const func = console.log
+func('ciao')
+```
+
+Vediamo un altro esempio
+
+```js
+const ajaxCall = fn => arg => fn(arg);
+const callback = () => console.log('asd');
+
+const getServerStuff = callback => ajaxCall(json => callback(json));
+getServerStuff(callback)();
+```
+
+equivale a:
+
+```js
+const getServerStuff = ajaxCall;
+getServerStuff2(callback)();
+```
+
 ## Programmazione Funzionale
 
 La Programmazione Funzionale si basa su alcuni concetti chiave che vedrò più avanti, per ora la più semplice definzione è che la PF fa uso di... funzioni e comunque predilige quest'ultime per controllare il flusso della mia applicazione.
