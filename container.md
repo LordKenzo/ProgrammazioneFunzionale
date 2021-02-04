@@ -162,3 +162,166 @@ class Maybe {
     }
 }
 ```
+
+## Either
+
+Con questo container realizziamo il branching del flusso di un algoritmo, tradotto in parole povere riusciamo a creare un parte then e una parte else, che si chiamano **Right** e **Left** e rappresentano rispettivamente il **successo** e l'**insuccesso** di una data operazione.
+
+Costruisco queste strutture sulla falsa riga del Container iniziale:
+
+```js
+class Either {
+    constructor(data) {
+        this.data = data;
+    }
+    static of(data) {
+
+    }
+}
+
+class Right extends Either {
+
+}
+
+class Left extends Either {
+
+}
+```
+
+Cosa metto nell'of di Either? E cosa nelle classi Right e Left?
+
+L'of di Either mi tornerà il caso di successo quindi una istanza di Right, mentre in Right e Left vado ad inserire le mie funzioni di map, in cui in caso di successo ritorno una istanza di Right, in caso di insuccesso ritorno l'istanza stessa che ha generato l'insucesso, in sostanza ignora la funzione passata:
+
+```js
+class Either {
+    constructor(data) {
+        this.data = data;
+    }
+    static of(data) {
+        return new Right(data);
+    }
+}
+
+class Right extends Either {
+    map(func) {
+        return Right.of(func(this.data));
+    }
+}
+
+class Left extends Either {
+    map(func) {
+        return this;
+    }
+}
+```
+
+Vediamo un esempio di codice scritto senza l'utilizzo di Either, Right e Left:
+
+```js
+const body = {secret: '12324'};
+const api = {secret: '1234', endpoint: '/user', data: {
+  user: 'Lorenzo', age: 42
+}};
+const sendError = errorMsg => console.log(errorMsg);
+const loadRoute = api => {
+  console.log(api.endpoint);
+  return api;
+};
+const sendData = api => {
+  console.log(api.data);
+  return api;
+}
+
+const accessAPI = (body, api) => {
+  return (body.secret === api.secret) ? api : `L'API Key è errata: ${body.secret}`;
+}
+
+const result = accessAPI(body, api);
+
+if(typeof result == 'string') {
+  sendError(result);
+} else {
+  loadRoute(api);
+  sendData(api);
+}
+```
+
+ed ecco il codice completo con l'uso di Either:
+
+```js
+class Either {
+    constructor(data) {
+        this.data = data;
+    }
+    static of(data) {
+        return new Right(data);
+    }
+}
+
+class Right extends Either {
+    map(func) {
+        // equivalente: return Right.of(func(this.data));
+        return new Right(func(this.data));
+    }
+}
+
+class Left extends Either {
+    map(func) {
+        return this;
+    }
+}
+
+
+// omissis
+
+/*
+Il codice ora ritorna un of di Right oppure un new Left
+*/
+const accessAPI = (body, api) => {
+  return (body.secret === api.secret)
+    ? Right.of(api)
+    : new Left(`L'API Key è errata: ${body.secret}`);
+}
+
+accessAPI(body, api).map(loadRoute).map(sendData);
+```
+
+Se provassi a mettere una secret non valida non ottengo nessun messaggio. Per risolvere questo problema introduco una nuova funzione **Fold**, il suo scopo è quello di eseguire una Right o una Left a seconda se sono nel caso di successo o insuccesso.
+
+```js
+fold(left, right) {
+
+}
+```
+
+Questa funzione verrà inserita sia in Left sia in Right:
+
+```js
+class Right extends Either {
+    map(func) {
+        // equivalente: return Right.of(func(this.data));
+        return new Right(func(this.data));
+    }
+    fold(left, right) {
+        right(this.data);
+        return this;
+    }
+}
+
+class Left extends Either {
+    map(func) {
+        return this;
+    }
+    fold(left, right) {
+        left(this.data);
+        return this;
+    }
+}
+```
+
+e userò il tutto in questo modo:
+
+```js
+accessAPI(body, api).map(loadRoute).fold(sendError, sendData);
+accessAPI(body, api).fold(sendError, loadRoute).map(sendData);
+```
