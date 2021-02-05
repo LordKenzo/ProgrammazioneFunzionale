@@ -38,9 +38,9 @@ Dato un insieme `S` non vuoto e `*` una operazione binaria su `S` l'applicazione
 
 ## Loop
 
-A partire da un Quasi Group, se per ogni `a` appartenente ad `S`, esiste `e` appartenente ad `S` tale che `a*e=e=e*a` ho l'identità, cioè l'**esistenza di un elemento identità** ed il Grupoid è detto Loop.
+A partire da un Quasi Group, esiste un `e` per ogni `a` appartenente ad `S` tale che `a*e=e=e*a` ho l'identità, cioè l'**esistenza di un elemento identità** ed il Grupoid è detto Loop.
 
-## Semigroup
+## Semigroup
 
 A partire da un Quasi Group, la mia struttura algebrica (S, *) con `S` insieme non vuoto e `*` operazione binaria allora `(a*b)*c=a*(b*c)` per ogni `a,b,c` appartenenti ad `S` in cui l'operazione binaria soddisfa la **proprietà associativa**, quindi la struttura la struttura algebrica soddisfa questa proprietà ed è detta Semigroup.
 
