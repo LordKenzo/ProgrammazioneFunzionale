@@ -51,7 +51,6 @@ L'operatore pipe prende:
 
 ```ts
 import { pipe, flow } from 'fp-ts/function';
-import * as option from 'fp-ts/Option';
 
 // add è volutamente sovrastrutturata di tipi, vedi multiply per una gestione del tipo più snella che sfrutta l'inferenza di tipo
 const add: (x: number) => (y: number) => number = (x: number) => (y: number) => x + y;
