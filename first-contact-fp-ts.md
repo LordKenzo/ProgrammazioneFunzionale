@@ -16,7 +16,7 @@ Qui viene il concetto di **type constructor** cioè una funzione che prende in i
 Siamo abituati a conoscere il concetto di **value constructor** meglio noti come **funzioni** e **metodi**.
 Ora prendiamo il concetto di funzionalità/comportamento. Potrei definire delle funzionalità di uguaglianza (eq), di ordinamento (ord), di visualizzazione (show), ecc... queste mi definiscono un **TypeClass** ed è un concetto simile ai Traits di Scala e alle Interfacce di Java/TypeScript. Sono comportamenti che ritrovo in quei tipi appartenenti a quella type class. Per fare un paragone è come se avessi degli Archetipi di classe di un gioco RPG e delle Specializzazioni su quegli Archetipi o almeno credo 😅.
 
-## Un primo incontro: Pipe e Flow
+## Un primo incontro: Pipe e Flow
 
 Utilizzando RunJS o qualsiasi altro compilatore online/editor locale, installiamo la libreria **fp-ts** `npm i fp-ts`:
 
@@ -118,7 +118,7 @@ concat(10, flow(add2, multiply2, convertToString)); // [10, 'il valore ottenuto 
 
 Qui il parametro `n` deve far parte della mia funzione anonima e in generale è da evitare perché potrei fare "shadowing" di una variabile con lo stesso nome nell'outer scope. Inoltre è prolisso. Con la flow non ho bisogno della funzione anonima in quanto la flow ritorna una funzione lei stessa e pertanto `transformer(a)` è come se fosse `flow(...)(a)`.
 
-## Prodotto e Somma di Tipi
+## Prodotto e Somma di Tipi
 
 Supponiamo ora di avere una specifica che preveda la costruzione di uno schema per il noleggio di una autovettura. Definiamo quindi delle regole e dei vincoli tali per cui devo tenere traccia di:
 
