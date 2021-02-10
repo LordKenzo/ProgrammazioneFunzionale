@@ -3,7 +3,7 @@
 Questo repository rappresenta un notebook virtuale di appunti presi durante il mio tentativo 😅 di studio e comprensione della Programmazione Funzionale.
 Non è una guida, un libro o qualcosa di strutturato e pensato a priori, pertanto è soggetta ad: errori, orrori e mal di testa 🤕
 
-Per definire la **Programmazione Funzionale** dobbiamo "incastrare" più concetti, alcuni presi dalla matematica. E' un paradigma che fa uso della composizione di funzioni che ritornano valori a partire da espressioni contenute nel body. Le funzioni sono **Cittadini di Primi Classe**, in cui la funzione è trattata come un qualsiasi altro valore e pertanto posso usarla come parametro o valore di ritorno. Le caratteristiche fondamentali della PF sono:
+Per definire la **Programmazione Funzionale** dobbiamo "incastrare" più concetti, alcuni presi dalla matematica ed in particolare della lambda calcolo. E' un paradigma che fa uso della composizione di funzioni che ritornano valori a partire da espressioni contenute nel body. Le funzioni sono **Cittadini di Primi Classe**, in cui la funzione è trattata come un qualsiasi altro valore e pertanto posso usarla come parametro o valore di ritorno. Le caratteristiche fondamentali della PF sono:
 
 * Trasparenza referenziale;
 * Funzioni Pure;
@@ -15,6 +15,7 @@ Quando creiamo un applicazione completa avremo una parte puramente funzionale ed
 
 ## Indice
 
+* [Principio](./principio.md)
 * [Concetti di base](./algebra.md)
 * [Introduzione FP](./intro-fp.md)
 * [Primi Step con FP-TS](./first-contact-fp-ts.md)
