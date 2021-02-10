@@ -7,6 +7,7 @@ Non è una guida, un libro o qualcosa di strutturato e pensato a priori, pertant
 
 * [Concetti di base](./algebra.md)
 * [Introduzione FP](./intro-fp.md)
+* [Primi Step con FP-TS](./first-contact-fp-ts.md)
 * [Contenitori](./container.md)
 
 ## Concetti brevi
